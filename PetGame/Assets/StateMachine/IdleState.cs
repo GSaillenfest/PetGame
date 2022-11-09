@@ -11,7 +11,7 @@ public class IdleState : BaseAbstractState
 
     public override void OnStateEnter(StateManager context)
     {
-        speed = 300f;
+        context.Speed = 300f;
         Debug.Log("Entering IdleState");
         context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
         RandomPosition(context);
@@ -41,7 +41,7 @@ public class IdleState : BaseAbstractState
         context.creatureRb.MoveRotation(lookRotation);
         if (direction.magnitude > 0.2f)
         {
-            context.creatureRb.velocity = direction.normalized * Time.deltaTime * speed;
+            context.creatureRb.velocity = direction.normalized * Time.deltaTime * context.Speed;
         }
         else RandomPosition(context);
     }

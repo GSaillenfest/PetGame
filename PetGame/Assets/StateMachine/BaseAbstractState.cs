@@ -4,7 +4,7 @@ using UnityEngine;
 
 public abstract class BaseAbstractState
 {
-    public float speed;
+
 
     public abstract void OnStateEnter(StateManager context);
 

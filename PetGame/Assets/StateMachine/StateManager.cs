@@ -12,6 +12,9 @@ public class StateManager : MonoBehaviour
     public Rigidbody creatureRb;
 
     public GameObject toy;
+    float speed = 300f;
+    public float Speed { get { return speed; } set { speed = Mathf.Min(value, 600f); } }
+
 
     // Start is called before the first frame update
     void Start()
@@ -24,7 +27,8 @@ public class StateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        currentState.OnStateUpdate(this);  
+        currentState.OnStateUpdate(this);
+        Debug.Log(speed);
     }
 
     public void SwitchState(BaseAbstractState state)

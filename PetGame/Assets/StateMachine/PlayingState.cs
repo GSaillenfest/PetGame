@@ -9,9 +9,9 @@ public class PlayingState : BaseAbstractState
 
     public override void OnStateEnter(StateManager context)
     {
-        speed = 600f;
-        toy = context.toy;
         Debug.Log("Entering PlayingState");
+        context.Speed = 600f;
+        toy = context.toy;
         context.transform.gameObject.GetComponent<Renderer>().material.color = Color.blue;
     }
     
@@ -25,6 +25,7 @@ public class PlayingState : BaseAbstractState
     public override void OnStateExit(StateManager context)
     {
         Debug.Log("Exiting PlayingState");
+        context.Speed = 300f;
     }
 
     public override void OnTriggerEnter(StateManager context, Collider trigger)
@@ -37,10 +38,10 @@ public class PlayingState : BaseAbstractState
         Vector3 direction = destination - context.creatureRb.position;
         Quaternion lookRotation = Quaternion.LookRotation(direction, Vector3.up);
         context.creatureRb.MoveRotation(lookRotation);
-        if (direction.magnitude > 0.2f)
+        if (direction.magnitude > 0.5f)
         {
-            context.creatureRb.velocity = direction.normalized * Time.deltaTime * speed;
+            context.creatureRb.velocity = direction.normalized * Time.deltaTime * context.Speed;
         }
-        else ;
+        
     }
 }
