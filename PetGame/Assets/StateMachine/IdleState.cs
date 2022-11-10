@@ -8,45 +8,51 @@ public class IdleState : BaseAbstractState
 {
 
     Vector3 randomPos;
+    public IdleState(StateManager _context) : base(_context) { }
 
-    public override void OnStateEnter(StateManager context)
+
+    public override void OnStateEnter()
     {
-        context.Speed = 300f;
         Debug.Log("Entering IdleState");
+        context.Speed = 100f;
         context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
-        RandomPosition(context);
+        RandomPosition();
     }
 
 
-    public override void OnStateUpdate(StateManager context)
+    public override void OnStateUpdate()
     {
-        MoveToRandomPosition(context, randomPos);
+
     }
 
-    public override void OnStateExit(StateManager context)
+    public override void OnStateFixedUpdate()
+    {
+        MoveToRandomPosition(randomPos);
+    }
+
+    public override void OnStateExit()
     {
         Debug.Log("Exiting IdleState");
     }
 
-    void RandomPosition(StateManager context)
+    void RandomPosition()
     {
         randomPos = context.transform.position + Random.insideUnitSphere * 5f;
         randomPos.y = 0.5f;
-        Debug.Log(randomPos);
     }
-    private void MoveToRandomPosition(StateManager context, Vector3 destination)
+    private void MoveToRandomPosition(Vector3 destination)
     {
         Vector3 direction = destination - context.creatureRb.position;
         Quaternion lookRotation = Quaternion.LookRotation(direction, Vector3.up);
         context.creatureRb.MoveRotation(lookRotation);
         if (direction.magnitude > 0.2f)
         {
-            context.creatureRb.velocity = direction.normalized * Time.deltaTime * context.Speed;
+            context.creatureRb.velocity = direction.normalized * Time.fixedDeltaTime * context.Speed;
         }
-        else RandomPosition(context);
+        else RandomPosition();
     }
 
-    public override void OnTriggerEnter(StateManager context, Collider trigger)
+    public override void OnTriggerEnter(Collider trigger)
     {
         if (trigger.gameObject.CompareTag("Toy"))
         {

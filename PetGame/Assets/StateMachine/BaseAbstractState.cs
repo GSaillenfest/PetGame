@@ -4,14 +4,20 @@ using UnityEngine;
 
 public abstract class BaseAbstractState
 {
+    protected StateManager context;
+    public BaseAbstractState(StateManager _context)
+    {
+        context = _context;
+    }
 
+    public abstract void OnStateEnter();
 
-    public abstract void OnStateEnter(StateManager context);
+    public abstract void OnStateUpdate();
 
-    public abstract void OnStateUpdate(StateManager context);
+    public abstract void OnStateFixedUpdate();
 
-    public abstract void OnStateExit(StateManager context);
+    public abstract void OnStateExit();
 
-    public abstract void OnTriggerEnter(StateManager context, Collider trigger);
+    public abstract void OnTriggerEnter(Collider trigger);
 
 }
