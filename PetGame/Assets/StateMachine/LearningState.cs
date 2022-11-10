@@ -14,8 +14,10 @@ public class LearningState : BaseAbstractState
     public override void OnStateEnter()
     {
         Debug.Log("Entering LearningState");
-        context.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
+        //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
         timerLearning = 2f;
+        context.animator.SetBool("Walking", false);
+
     }
 
 
@@ -27,20 +29,8 @@ public class LearningState : BaseAbstractState
             {
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Vector3 mousePos = Vector3.zero;
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    Debug.DrawRay(ray.origin, ray.direction);
-                    RaycastHit hit;
-                    if (Physics.Raycast(ray, out hit))
-                    {
-                        mousePos = hit.point;
-                    }
-                    mousePos.y = context.transform.position.y;
-                    LearningPath(mousePos);
-
-                    Vector3 direction = mousePos - context.transform.position;
-                    direction.y = 0.5f;
-                    LookAt(direction);
+                    LearningPath();
+                                        
                 }
             }
             else
@@ -49,20 +39,7 @@ public class LearningState : BaseAbstractState
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    Vector3 mousePos = Vector3.zero;
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                    Debug.DrawRay(ray.origin, ray.direction);
-                    RaycastHit hit;
-                    if (Physics.Raycast(ray, out hit))
-                    {
-                        mousePos = hit.point;
-                    }
-                    mousePos.y = context.transform.position.y;
-                    LearningPath(mousePos);
-
-                    Vector3 direction = mousePos - context.transform.position;
-                    direction.y = 0.5f;
-                    LookAt(direction);
+                    LearningPath();
                 }
             }
         }
@@ -71,7 +48,7 @@ public class LearningState : BaseAbstractState
             if (path.Count < 2)
             {
                 path.Clear();
-                context.SwitchState(context.idle);
+                SwitchState(context.idle);
             }
             else DoPath();
         }
@@ -85,7 +62,14 @@ public class LearningState : BaseAbstractState
     private void DoPath()
     {
         Debug.Log("Switch to new state");
-        context.SwitchState(context.idle);
+        foreach (Vector3 points in path)
+        {
+            GameObject pathPoint = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            pathPoint.transform.position = points; 
+            pathPoint.transform.localScale *= 0.2f;
+            pathPoint.GetComponent<Renderer>().material.color = Color.red;
+        }
+        SwitchState(context.idle);
     }
 
     public override void OnStateExit()
@@ -98,17 +82,23 @@ public class LearningState : BaseAbstractState
 
     }
 
-    void LearningPath(Vector3 newPathPoint)
+    void LearningPath()
     {
-        path.Add(newPathPoint);
-        timerLearning = 2f;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        
+        if (Physics.Raycast(ray, out hit))
+        {
+            Vector3 mousePos = hit.point;
+            mousePos.y = context.transform.position.y;
+            path.Add(mousePos);
+            timerLearning = 2f;
+
+            Vector3 direction = mousePos - context.transform.position;
+            LookAt(direction);
+        }
+
         Debug.Log(path[path.Count - 1]);
     }
 
-    private void LookAt(Vector3 direction)
-    {
-        Quaternion lookRotation = Quaternion.LookRotation(direction, Vector3.up);
-        //context.creatureRb.MoveRotation(lookRotation);
-        context.transform.forward = direction.normalized;
-    }
 }

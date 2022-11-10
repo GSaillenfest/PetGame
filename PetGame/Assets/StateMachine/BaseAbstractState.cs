@@ -20,4 +20,15 @@ public abstract class BaseAbstractState
 
     public abstract void OnTriggerEnter(Collider trigger);
 
+    public void SwitchState(BaseAbstractState state)
+    {
+        context.SwitchState(state);
+    }
+
+    public void LookAt(Vector3 direction)
+    {
+        Quaternion lookRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+        context.creatureRb.transform.rotation = lookRotation;
+    }
+
 }

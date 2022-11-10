@@ -15,8 +15,9 @@ public class IdleState : BaseAbstractState
     {
         Debug.Log("Entering IdleState");
         context.Speed = 100f;
-        context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
+        //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
         RandomPosition();
+        context.animator.SetBool("Walking", true);
     }
 
 
@@ -38,18 +39,27 @@ public class IdleState : BaseAbstractState
     void RandomPosition()
     {
         randomPos = context.transform.position + Random.insideUnitSphere * 5f;
-        randomPos.y = 0.5f;
+        randomPos.y = 0;
+        Debug.Log(randomPos);
     }
+
     private void MoveToRandomPosition(Vector3 destination)
     {
-        Vector3 direction = destination - context.creatureRb.position;
-        Quaternion lookRotation = Quaternion.LookRotation(direction, Vector3.up);
-        context.creatureRb.MoveRotation(lookRotation);
-        if (direction.magnitude > 0.2f)
+        Vector3 direction = destination - context.transform.position;
+        direction.y = context.transform.position.y;
+
+        LookAt(direction);
+
+        Debug.Log(direction.magnitude);
+        if (direction.magnitude > 0.5f)
         {
-            context.creatureRb.velocity = direction.normalized * Time.fixedDeltaTime * context.Speed;
+            context.creatureRb.velocity = context.Speed * Time.fixedDeltaTime * direction.normalized;
         }
-        else RandomPosition();
+        else
+        {
+            RandomPosition();
+            SwitchState(context.waiting);
+        }
     }
 
     public override void OnTriggerEnter(Collider trigger)
@@ -57,7 +67,7 @@ public class IdleState : BaseAbstractState
         if (trigger.gameObject.CompareTag("Toy"))
         {
             context.toy = trigger.gameObject;
-            context.SwitchState(context.playing);
+            SwitchState(context.playing);
         }
     }
 }

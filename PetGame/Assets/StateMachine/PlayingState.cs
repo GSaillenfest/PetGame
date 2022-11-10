@@ -11,11 +11,12 @@ public class PlayingState : BaseAbstractState
     public override void OnStateEnter()
     {
         Debug.Log("Entering PlayingState");
-        context.Speed = 50f;
+        context.Speed = 20f;
         toy = context.toy;
-        context.transform.gameObject.GetComponent<Renderer>().material.color = Color.blue;
+        //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.blue;
+        context.animator.SetBool("Walking", true);
     }
-    
+
 
     public override void OnStateUpdate()
     {
@@ -32,7 +33,6 @@ public class PlayingState : BaseAbstractState
                 Debug.DrawRay(ray.origin, ray.direction * (ray.origin-hit.point).magnitude, Color.green, 10f);
             }
 
-            //mousePos.y = context.transform.position.y;
 
             Debug.Log((mousePos - context.transform.position).magnitude);
             Debug.Log(context.transform.position);
@@ -40,7 +40,7 @@ public class PlayingState : BaseAbstractState
 
             if ((mousePos - context.transform.position).magnitude <= 10f)
             {
-                context.SwitchState(context.learning);
+                SwitchState(context.learning);
             }
         }
     }
@@ -65,7 +65,6 @@ public class PlayingState : BaseAbstractState
     private void MoveTo(Vector3 destination)
     {
         Vector3 direction = destination - context.creatureRb.position;
-        direction.y = 0f;
         LookAt(direction);
         if (direction.magnitude > 0.5f)
         {
@@ -73,10 +72,5 @@ public class PlayingState : BaseAbstractState
         }
 
     }
-
-    private void LookAt(Vector3 direction)
-    {
-        Quaternion lookRotation = Quaternion.LookRotation(direction, Vector3.up);
-        context.creatureRb.MoveRotation(lookRotation);
-    }
+        
 }
