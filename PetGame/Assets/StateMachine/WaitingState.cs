@@ -31,7 +31,7 @@ public class WaitingState : BaseAbstractState
         }
         else
         {
-            SwitchState(context.previousState);
+            SwitchState(State.previousState);
         }
     }
 
@@ -52,5 +52,8 @@ public class WaitingState : BaseAbstractState
 
     }
 
+    public override void OnTriggerExit(Collider trigger)
+    {
 
+    }
 }

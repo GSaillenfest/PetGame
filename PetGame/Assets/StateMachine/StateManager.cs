@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class StateManager : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class StateManager : MonoBehaviour
     public WaitingState waiting;
 
     public Animator animator;
+    public NavMeshAgent navMeshAgent;
 
     public Rigidbody creatureRb;
 
@@ -28,6 +30,7 @@ public class StateManager : MonoBehaviour
         waiting = new(this);
 
         animator = GetComponentInChildren<Animator>();
+        navMeshAgent = GetComponentInChildren<NavMeshAgent>();
     }
     // Start is called before the first frame update
     void Start()
@@ -48,16 +51,48 @@ public class StateManager : MonoBehaviour
         currentState.OnStateFixedUpdate();
     }
 
-    public void SwitchState(BaseAbstractState state)
+    public void SwitchState(State state)
     {
+        BaseAbstractState newState = FindState(state);
         currentState.OnStateExit();
         previousState = currentState;
-        currentState = state;
+        currentState = newState;
         currentState.OnStateEnter();
+    }
+
+    BaseAbstractState FindState(State state)
+    {
+        BaseAbstractState selectedState = state.ToString() switch
+        {
+            "idle" => idle,
+            "playing" => playing,
+            "waiting" => waiting,
+            "learning" => learning,
+            "previousState" => previousState,
+            _ => waiting,
+        };
+        return selectedState;
     }
 
     private void OnTriggerEnter(Collider trigger)
     {
         currentState.OnTriggerEnter(trigger);
     }
+
+    private void OnTriggerExit(Collider trigger)
+    {
+        currentState.OnTriggerExit(trigger);
+    }
+
 }
+
+public enum State
+{
+    idle,
+    playing,
+    waiting,
+    learning,
+    previousState
+}
+
+

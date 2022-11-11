@@ -48,7 +48,7 @@ public class LearningState : BaseAbstractState
             if (path.Count < 2)
             {
                 path.Clear();
-                SwitchState(context.idle);
+                SwitchState(State.idle);
             }
             else DoPath();
         }
@@ -69,7 +69,7 @@ public class LearningState : BaseAbstractState
             pathPoint.transform.localScale *= 0.2f;
             pathPoint.GetComponent<Renderer>().material.color = Color.red;
         }
-        SwitchState(context.idle);
+        SwitchState(State.idle);
     }
 
     public override void OnStateExit()
@@ -101,4 +101,7 @@ public class LearningState : BaseAbstractState
         Debug.Log(path[path.Count - 1]);
     }
 
+    public override void OnTriggerExit(Collider trigger)
+    {
+    }
 }

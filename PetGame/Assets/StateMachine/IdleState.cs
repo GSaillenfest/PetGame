@@ -14,7 +14,8 @@ public class IdleState : BaseAbstractState
     public override void OnStateEnter()
     {
         Debug.Log("Entering IdleState");
-        context.Speed = 100f;
+        //context.Speed = 100f;
+        context.navMeshAgent.speed = 3.5f;
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
         RandomPosition();
         context.animator.SetBool("Walking", true);
@@ -28,7 +29,7 @@ public class IdleState : BaseAbstractState
 
     public override void OnStateFixedUpdate()
     {
-        MoveToRandomPosition(randomPos);
+        MoveTo(randomPos);
     }
 
     public override void OnStateExit()
@@ -38,12 +39,13 @@ public class IdleState : BaseAbstractState
 
     void RandomPosition()
     {
-        randomPos = context.transform.position + Random.insideUnitSphere * 5f;
+        randomPos = context.transform.position + Random.insideUnitSphere * 10f;
+        if ((randomPos - context.transform.position).magnitude < 5f) randomPos *= 2f;
         randomPos.y = 0;
         Debug.Log(randomPos);
     }
 
-    private void MoveToRandomPosition(Vector3 destination)
+    private void MoveTo(Vector3 destination)
     {
         Vector3 direction = destination - context.transform.position;
         direction.y = context.transform.position.y;
@@ -53,12 +55,12 @@ public class IdleState : BaseAbstractState
         Debug.Log(direction.magnitude);
         if (direction.magnitude > 0.5f)
         {
-            context.creatureRb.velocity = context.Speed * Time.fixedDeltaTime * direction.normalized;
+            context.navMeshAgent.SetDestination(destination);
         }
         else
         {
             RandomPosition();
-            SwitchState(context.waiting);
+            SwitchState(State.waiting);
         }
     }
 
@@ -67,7 +69,12 @@ public class IdleState : BaseAbstractState
         if (trigger.gameObject.CompareTag("Toy"))
         {
             context.toy = trigger.gameObject;
-            SwitchState(context.playing);
+            SwitchState(State.playing);
         }
+    }
+
+    public override void OnTriggerExit(Collider trigger)
+    {
+        
     }
 }
