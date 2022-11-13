@@ -6,7 +6,7 @@ using UnityEngine.AI;
 
 public class StateManager : MonoBehaviour
 {
-    BaseAbstractState currentState;
+    public BaseAbstractState currentState;
     public BaseAbstractState previousState;
     public IdleState idle;
     public PlayingState playing;
@@ -77,12 +77,20 @@ public class StateManager : MonoBehaviour
     private void OnTriggerEnter(Collider trigger)
     {
         currentState.OnTriggerEnter(trigger);
+
+        if (trigger.CompareTag("BorderWall"))
+        {
+            SwitchState(State.waiting);
+            Debug.Log("changing State");
+        }
     }
 
     private void OnTriggerExit(Collider trigger)
     {
         currentState.OnTriggerExit(trigger);
     }
+
+    
 
 }
 

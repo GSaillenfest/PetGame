@@ -44,7 +44,7 @@ public class WaitingState : BaseAbstractState
 
     public override void OnStateExit()
     {
-        Debug.Log("Exiting LearningState");
+        Debug.Log("Exiting WaitingState");
     }
 
     public override void OnTriggerEnter(Collider trigger)

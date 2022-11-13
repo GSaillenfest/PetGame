@@ -8,6 +8,7 @@ public abstract class BaseAbstractState
     public BaseAbstractState(StateManager _context)
     {
         context = _context;
+        
     }
 
     public abstract void OnStateEnter();

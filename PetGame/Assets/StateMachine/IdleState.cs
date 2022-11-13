@@ -41,8 +41,9 @@ public class IdleState : BaseAbstractState
     {
         randomPos = context.transform.position + Random.insideUnitSphere * 10f;
         if ((randomPos - context.transform.position).magnitude < 5f) randomPos *= 2f;
+        if (Mathf.Abs(randomPos.x) > 72) randomPos.x = 68f;
+        if (Mathf.Abs(randomPos.z) > 72) randomPos.z = 68f;
         randomPos.y = 0;
-        Debug.Log(randomPos);
     }
 
     private void MoveTo(Vector3 destination)
@@ -52,7 +53,6 @@ public class IdleState : BaseAbstractState
 
         LookAt(direction);
 
-        Debug.Log(direction.magnitude);
         if (direction.magnitude > 0.5f)
         {
             context.navMeshAgent.SetDestination(destination);
