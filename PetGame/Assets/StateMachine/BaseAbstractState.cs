@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public abstract class BaseAbstractState
 {
     protected StateManager context;
+    protected List<Vector3> pathPoints = new();
+    protected NavMeshPath path = new();
+
     public BaseAbstractState(StateManager _context)
     {
         context = _context;
-        
     }
 
     public abstract void OnStateEnter();

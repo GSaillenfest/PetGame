@@ -12,13 +12,14 @@ public class StateManager : MonoBehaviour
     public PlayingState playing;
     public LearningState learning;
     public WaitingState waiting;
+    public FollowingPathState following;
 
     public Animator animator;
     public NavMeshAgent navMeshAgent;
-
+    public List<Vector3> pathPoints;
     public Rigidbody creatureRb;
-
     public GameObject toy;
+
     float speed = 300f;
     public float Speed { get { return speed; } set { speed = Mathf.Min(value, 600f); } }
 
@@ -28,6 +29,7 @@ public class StateManager : MonoBehaviour
         playing = new(this);
         learning = new(this);
         waiting = new(this);
+        following = new(this);
 
         animator = GetComponentInChildren<Animator>();
         navMeshAgent = GetComponentInChildren<NavMeshAgent>();
@@ -69,6 +71,7 @@ public class StateManager : MonoBehaviour
             "waiting" => waiting,
             "learning" => learning,
             "previousState" => previousState,
+            "following" => following,
             _ => waiting,
         };
         return selectedState;
@@ -100,7 +103,8 @@ public enum State
     playing,
     waiting,
     learning,
-    previousState
+    previousState,
+    following
 }
 
 

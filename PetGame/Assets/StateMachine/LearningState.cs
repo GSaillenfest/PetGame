@@ -7,12 +7,7 @@ using UnityEngine.AI;
 public class LearningState : BaseAbstractState
 {
     public LearningState(StateManager _context) : base(_context) { }
-
-    List<Vector3> pathPoints = new();
-    NavMeshPath path;
     float timerLearning;
-    bool pathLearnt;
-    int pathIndex;
 
     public override void OnStateEnter()
     {
@@ -50,36 +45,19 @@ public class LearningState : BaseAbstractState
         {
             if (pathPoints.Count < 2)
             {
+                //Debug.Log(context.navMeshAgent.hasPath);
                 pathPoints.Clear();
-                SwitchState(State.idle);
+                SwitchState(State.previousState);
             }
             else
             {
-                pathLearnt = true;
-                context.navMeshAgent.CalculatePath(pathPoints[0], path);
-                context.navMeshAgent.SetPath(path);
+                Debug.Log(context.navMeshAgent.hasPath);
+                context.pathPoints = pathPoints;
+                SwitchState(State.following);
             }
         }
-
-        if (pathLearnt)
-        {
-            MoveAlongPath();
-        }
     }
 
-    // bugged for now.
-    private void MoveAlongPath()
-    {
-        if (context.navMeshAgent.remainingDistance <= 0.01f)
-        {
-            if (pathIndex < pathPoints.Count - 1) pathIndex++;
-            else pathIndex = 0;
-            context.navMeshAgent.CalculatePath(pathPoints[pathIndex], path);
-            context.navMeshAgent.SetPath(path);
-        }
-        for (int i = 0; i < path.corners.Length - 1; i++)
-        Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.red, 2f);
-    }
 
     public override void OnStateFixedUpdate()
     {
@@ -121,7 +99,7 @@ public class LearningState : BaseAbstractState
             LookAt(direction);
         }
 
-        Debug.Log(pathPoints[pathPoints.Count - 1]);
+        Debug.Log(pathPoints.Count);
     }
 
     public override void OnTriggerExit(Collider trigger)
