@@ -13,7 +13,7 @@ public class WaitingState : BaseAbstractState
 
     public override void OnStateEnter()
     {
-        Debug.Log("Entering WaitingState");
+        //Debug.Log("Entering WaitingState");
         timerWaiting = Random.Range(0.5f, 2f);
         context.animator.SetBool("Walking", false);
 
@@ -44,7 +44,7 @@ public class WaitingState : BaseAbstractState
 
     public override void OnStateExit()
     {
-        Debug.Log("Exiting WaitingState");
+        //Debug.Log("Exiting WaitingState");
     }
 
     public override void OnTriggerEnter(Collider trigger)

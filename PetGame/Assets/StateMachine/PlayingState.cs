@@ -35,9 +35,9 @@ public class PlayingState : BaseAbstractState
             }
 
 
-            Debug.Log((mousePos - context.transform.position).magnitude);
-            Debug.Log(context.transform.position);
-            Debug.Log(mousePos);
+            //Debug.Log((mousePos - context.transform.position).magnitude);
+            //Debug.Log(context.transform.position);
+            //Debug.Log(mousePos);
 
             if ((mousePos - context.transform.position).magnitude <= 10f)
             {
@@ -54,7 +54,7 @@ public class PlayingState : BaseAbstractState
 
     public override void OnStateExit()
     {
-        Debug.Log("Exiting PlayingState");
+        //Debug.Log("Exiting PlayingState");
         context.Speed = 300f;
     }
 

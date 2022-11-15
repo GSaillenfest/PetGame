@@ -11,7 +11,7 @@ public class LearningState : BaseAbstractState
 
     public override void OnStateEnter()
     {
-        Debug.Log("Entering LearningState");
+        //Debug.Log("Entering LearningState");
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
         timerLearning = 2f;
         context.animator.SetBool("Walking", false);
@@ -51,38 +51,13 @@ public class LearningState : BaseAbstractState
             }
             else
             {
-                Debug.Log(context.navMeshAgent.hasPath);
+                //Debug.Log(context.navMeshAgent.hasPath);
                 context.pathPoints = pathPoints;
                 SwitchState(State.following);
             }
         }
     }
-
-
-    public override void OnStateFixedUpdate()
-    {
-
-    }
-
-    //private void DoPath()
-    //{
-    //    Debug.Log("Switch to new state");
-
-    //    context.navMeshAgent.SetPath(path);
-    //    pathLearnt = true;
-    //    //SwitchState(State.idle);
-    //}
-
-    public override void OnStateExit()
-    {
-        Debug.Log("Exiting LearningState");
-    }
-
-    public override void OnTriggerEnter(Collider trigger)
-    {
-
-    }
-
+    
     void LearningPath()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -99,7 +74,23 @@ public class LearningState : BaseAbstractState
             LookAt(direction);
         }
 
-        Debug.Log(pathPoints.Count);
+        //Debug.Log(pathPoints.Count);
+    }
+
+    public override void OnStateFixedUpdate()
+    {
+
+    }
+
+    
+    public override void OnStateExit()
+    {
+        //Debug.Log("Exiting LearningState");
+    }
+
+    public override void OnTriggerEnter(Collider trigger)
+    {
+
     }
 
     public override void OnTriggerExit(Collider trigger)

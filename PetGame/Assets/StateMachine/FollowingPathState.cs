@@ -11,7 +11,7 @@ public class FollowingPathState : BaseAbstractState
 
     public override void OnStateEnter()
     {
-        Debug.Log("Entering FollowingPathState");
+        //Debug.Log("Entering FollowingPathState");
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.Yellow;
         context.animator.SetBool("Walking", true);
         pathPoints = context.pathPoints;
@@ -48,7 +48,7 @@ public class FollowingPathState : BaseAbstractState
 
     public override void OnStateExit()
     {
-        Debug.Log("Exiting FollowingPathState");
+        //Debug.Log("Exiting FollowingPathState");
     }
 
     public override void OnTriggerEnter(Collider trigger)
