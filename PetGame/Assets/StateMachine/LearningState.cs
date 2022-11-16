@@ -8,14 +8,16 @@ public class LearningState : BaseAbstractState
 {
     public LearningState(StateManager _context) : base(_context) { }
     float timerLearning;
+    GameObject click;
 
     public override void OnStateEnter()
     {
-        //Debug.Log("Entering LearningState");
+        Debug.Log("Entering LearningState");
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
-        timerLearning = 2f;
+        timerLearning = 5f;
         context.animator.SetBool("Walking", false);
         path = new();
+        click = GameObject.Find("click");
     }
 
 
@@ -23,22 +25,13 @@ public class LearningState : BaseAbstractState
     {
         if (timerLearning > 0f)
         {
-            if (pathPoints.Count == 0)
+            if (Input.GetMouseButtonDown(0))
             {
-                if (Input.GetMouseButtonDown(0))
-                {
-                    LearningPath();
-
-                }
+                LearningPath();
             }
-            else
+            if (pathPoints.Count != 0)
             {
                 timerLearning -= Time.deltaTime;
-
-                if (Input.GetMouseButtonDown(0))
-                {
-                    LearningPath();
-                }
             }
         }
         else
@@ -57,7 +50,7 @@ public class LearningState : BaseAbstractState
             }
         }
     }
-    
+
     void LearningPath()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -68,13 +61,15 @@ public class LearningState : BaseAbstractState
             Vector3 mousePos = hit.point;
             mousePos.y = context.transform.position.y;
             pathPoints.Add(mousePos);
-            timerLearning = 2f;
+            click.transform.position = mousePos;
+            Debug.DrawRay(ray.origin, ray.direction * (ray.origin - hit.point).magnitude, Color.green, 10f);
+            timerLearning = 5f;
 
             Vector3 direction = mousePos - context.transform.position;
             LookAt(direction);
         }
 
-        //Debug.Log(pathPoints.Count);
+        Debug.Log(pathPoints.Count);
     }
 
     public override void OnStateFixedUpdate()
@@ -82,7 +77,7 @@ public class LearningState : BaseAbstractState
 
     }
 
-    
+
     public override void OnStateExit()
     {
         //Debug.Log("Exiting LearningState");

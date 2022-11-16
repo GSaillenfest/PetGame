@@ -13,7 +13,7 @@ public class IdleState : BaseAbstractState
 
     public override void OnStateEnter()
     {
-        Debug.Log("Entering IdleState");
+        //Debug.Log("Entering IdleState");
         //context.Speed = 100f;
         context.navMeshAgent.speed = 3.5f;
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
@@ -34,7 +34,7 @@ public class IdleState : BaseAbstractState
 
     public override void OnStateExit()
     {
-        Debug.Log("Exiting IdleState");
+        //Debug.Log("Exiting IdleState");
     }
 
     void RandomPosition()

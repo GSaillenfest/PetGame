@@ -10,7 +10,7 @@ public class PlayingState : BaseAbstractState
 
     public override void OnStateEnter()
     {
-        Debug.Log("Entering PlayingState");
+        //Debug.Log("Entering PlayingState");
         //context.Speed = 20f;
         context.navMeshAgent.speed = 7f;
         toy = context.toy;

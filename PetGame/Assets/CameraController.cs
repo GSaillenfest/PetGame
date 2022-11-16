@@ -36,7 +36,6 @@ public class CameraController : MonoBehaviour
     private void TranslateCamera()
     {
         Vector3 mousePosOnScreen = cam.ScreenToViewportPoint(Input.mousePosition);
-        Debug.Log(mousePosOnScreen);
 
         if (mousePosOnScreen.x > 0.95f)
         {
