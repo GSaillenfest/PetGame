@@ -8,6 +8,7 @@ public class IdleState : BaseAbstractState
 {
 
     Vector3 randomPos;
+    float timer = 3f;
     public IdleState(StateManager _context) : base(_context) { }
 
 
@@ -19,6 +20,7 @@ public class IdleState : BaseAbstractState
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
         RandomPosition();
         context.animator.SetBool("Walking", true);
+        timer = 3f;
     }
 
 
@@ -56,12 +58,15 @@ public class IdleState : BaseAbstractState
         if (direction.magnitude > 0.5f)
         {
             context.navMeshAgent.SetDestination(destination);
+            timer -= Time.deltaTime;
         }
-        else
+        else if(timer < 0f || direction.magnitude <= 0.5f)
         {
+            timer = 3f;
             RandomPosition();
             SwitchState(State.waiting);
         }
+        
     }
 
     public override void OnTriggerEnter(Collider trigger)

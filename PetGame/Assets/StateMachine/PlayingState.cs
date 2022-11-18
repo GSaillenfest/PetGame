@@ -27,11 +27,12 @@ public class PlayingState : BaseAbstractState
             Vector3 mousePos = Vector3.zero;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            
-            if (Physics.Raycast(ray.origin, ray.direction, out hit, 10000f))
+
+            if (Physics.Raycast(ray.origin, ray.direction, out hit, 10000f, 128))
             {
                 mousePos = hit.point;
                 Debug.DrawRay(ray.origin, ray.direction * (ray.origin-hit.point).magnitude, Color.green, 10f);
+                context.cameraController.SetCommandClickFeedback(Color.green, mousePos);
             }
 
 

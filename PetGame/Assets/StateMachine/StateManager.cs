@@ -19,6 +19,7 @@ public class StateManager : MonoBehaviour
     public List<Vector3> pathPoints;
     public Rigidbody creatureRb;
     public GameObject toy;
+    public CameraController cameraController;
 
     float speed = 300f;
     public float Speed { get { return speed; } set { speed = Mathf.Min(value, 600f); } }
@@ -33,6 +34,7 @@ public class StateManager : MonoBehaviour
 
         animator = GetComponentInChildren<Animator>();
         navMeshAgent = GetComponentInChildren<NavMeshAgent>();
+        cameraController = FindObjectOfType<CameraController>();
     }
     // Start is called before the first frame update
     void Start()
@@ -81,16 +83,16 @@ public class StateManager : MonoBehaviour
     {
         currentState.OnTriggerEnter(trigger);
 
-        if (trigger.CompareTag("BorderWall"))
-        {
-            SwitchState(State.waiting);
-            Debug.Log("changing State");
-        }
     }
 
     private void OnTriggerExit(Collider trigger)
     {
         currentState.OnTriggerExit(trigger);
+        if (trigger.CompareTag("BorderWall"))
+        {
+            SwitchState(State.waiting);
+            Debug.Log("changing State");
+        }
     }
 
     

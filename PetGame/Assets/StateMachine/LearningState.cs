@@ -8,7 +8,7 @@ public class LearningState : BaseAbstractState
 {
     public LearningState(StateManager _context) : base(_context) { }
     float timerLearning;
-    GameObject click;
+
 
     public override void OnStateEnter()
     {
@@ -17,7 +17,6 @@ public class LearningState : BaseAbstractState
         timerLearning = 5f;
         context.animator.SetBool("Walking", false);
         path = new();
-        click = GameObject.Find("click");
     }
 
 
@@ -56,12 +55,12 @@ public class LearningState : BaseAbstractState
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit))
+        if (Physics.Raycast(ray, out hit, 10000f, 128))
         {
             Vector3 mousePos = hit.point;
             mousePos.y = context.transform.position.y;
             pathPoints.Add(mousePos);
-            click.transform.position = mousePos;
+            context.cameraController.SetCommandClickFeedback(Color.red, mousePos);
             Debug.DrawRay(ray.origin, ray.direction * (ray.origin - hit.point).magnitude, Color.green, 10f);
             timerLearning = 5f;
 
