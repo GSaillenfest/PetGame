@@ -14,12 +14,12 @@ public class IdleState : BaseAbstractState
 
     public override void OnStateEnter()
     {
-        //Debug.Log("Entering IdleState");
+        Debug.Log("Entering IdleState");
         //context.Speed = 100f;
-        context.navMeshAgent.speed = 3.5f;
+        context.navMeshAgent.speed = 5f;
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
         RandomPosition();
-        context.animator.SetBool("Walking", true);
+        //context.animator.SetBool("Walking", true);
         timer = 3f;
     }
 
@@ -36,15 +36,14 @@ public class IdleState : BaseAbstractState
 
     public override void OnStateExit()
     {
-        //Debug.Log("Exiting IdleState");
+        Debug.Log("Exiting IdleState");
     }
 
     void RandomPosition()
     {
-        randomPos = context.transform.position + Random.insideUnitSphere * 10f;
-        if ((randomPos - context.transform.position).magnitude < 5f) randomPos *= 2f;
-        if (Mathf.Abs(randomPos.x) > 72) randomPos.x = 68f;
-        if (Mathf.Abs(randomPos.z) > 72) randomPos.z = 68f;
+        Vector2 randomInsideCircle = (Random.insideUnitCircle * 5f);
+        randomInsideCircle += randomInsideCircle.normalized * 5;
+        randomPos = context.transform.position + new Vector3(randomInsideCircle.x, 0, randomInsideCircle.y);
         randomPos.y = 0;
     }
 
@@ -55,18 +54,17 @@ public class IdleState : BaseAbstractState
 
         LookAt(direction);
 
-        if (direction.magnitude > 0.5f)
-        {
-            context.navMeshAgent.SetDestination(destination);
-            timer -= Time.deltaTime;
-        }
-        else if(timer < 0f || direction.magnitude <= 0.5f)
+        if (timer < 0f || direction.magnitude <= 0.1f)
         {
             timer = 3f;
             RandomPosition();
             SwitchState(State.waiting);
         }
-        
+        else if (direction.magnitude > 0.1f)
+        {
+            context.navMeshAgent.SetDestination(destination);
+            timer -= Time.deltaTime;
+        }
     }
 
     public override void OnTriggerEnter(Collider trigger)
@@ -78,8 +76,13 @@ public class IdleState : BaseAbstractState
         }
     }
 
+    public override void OnTriggerStay(Collider trigger)
+    {
+
+    }
+
     public override void OnTriggerExit(Collider trigger)
     {
-        
+
     }
 }

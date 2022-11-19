@@ -13,7 +13,7 @@ public class FollowingPathState : BaseAbstractState
     {
         Debug.Log("Entering FollowingPathState");
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.Yellow;
-        context.animator.SetBool("Walking", true);
+       // context.animator.SetBool("Walking", true);
         pathPoints = context.pathPoints;
         pathIndex = 0;
         context.navMeshAgent.CalculatePath(pathPoints[pathIndex], path);
@@ -52,6 +52,11 @@ public class FollowingPathState : BaseAbstractState
     }
 
     public override void OnTriggerEnter(Collider trigger)
+    {
+
+    }
+
+    public override void OnTriggerStay(Collider trigger)
     {
 
     }

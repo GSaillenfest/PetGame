@@ -113,7 +113,7 @@ public class CameraController : MonoBehaviour
                     pivotPointSet = true;
                 }
             }
-            Debug.Log((mousePos - initMousePos).magnitude);
+            //Debug.Log((mousePos - initMousePos).magnitude);
             pivotPointGameObject.transform.rotation = Quaternion.Euler(Vector3.up * (mousePos.x - initMousePos.x) * rotSpeed);
         }
         if (Input.GetMouseButtonUp(1))
@@ -146,7 +146,7 @@ public class CameraController : MonoBehaviour
         {
             Debug.Log("zooming");
             Vector3 translateVector = transform.forward;
-            translateVector = zoomInput * speed * Time.deltaTime * translateVector.normalized;
+            translateVector = Mathf.Abs(zoomInput)/zoomInput * speed * Time.deltaTime * translateVector.normalized;
             cam.transform.Translate(translateVector, Space.World);
         }
     }

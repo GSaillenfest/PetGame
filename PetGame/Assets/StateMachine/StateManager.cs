@@ -4,17 +4,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody))]
 public class StateManager : MonoBehaviour
 {
     public BaseAbstractState currentState;
+    public BaseAbstractState currentRole;
     public BaseAbstractState previousState;
     public IdleState idle;
     public PlayingState playing;
-    public LearningState learning;
     public WaitingState waiting;
     public FollowingPathState following;
+    public UnassignedRole unassigned;
+    public ExplorerRole explorer;
+    public LearnerRole learner;
 
-    public Animator animator;
+    //public Animator animator;
     public NavMeshAgent navMeshAgent;
     public List<Vector3> pathPoints;
     public Rigidbody creatureRb;
@@ -28,11 +33,13 @@ public class StateManager : MonoBehaviour
     {
         idle = new(this);
         playing = new(this);
-        learning = new(this);
         waiting = new(this);
         following = new(this);
+        unassigned = new(this);
+        explorer = new(this);
+        learner = new(this);
 
-        animator = GetComponentInChildren<Animator>();
+        //animator = GetComponentInChildren<Animator>();
         navMeshAgent = GetComponentInChildren<NavMeshAgent>();
         cameraController = FindObjectOfType<CameraController>();
     }
@@ -40,6 +47,7 @@ public class StateManager : MonoBehaviour
     void Start()
     {
         creatureRb = GetComponentInChildren<Rigidbody>();
+        currentRole = unassigned;
         currentState = idle;
         currentState.OnStateEnter();
     }
@@ -48,11 +56,13 @@ public class StateManager : MonoBehaviour
     void Update()
     {
         currentState.OnStateUpdate();
+        currentRole.OnStateUpdate();
     }
 
     private void FixedUpdate()
     {
         currentState.OnStateFixedUpdate();
+        currentRole.OnStateFixedUpdate();
     }
 
     public void SwitchState(State state)
@@ -62,6 +72,15 @@ public class StateManager : MonoBehaviour
         previousState = currentState;
         currentState = newState;
         currentState.OnStateEnter();
+    }    
+    
+    public void SwitchRole(Role role)
+    {
+        BaseAbstractState newRole = FindRole(role);
+        currentRole.OnStateExit();
+        previousState = currentRole;
+        currentRole = newRole;
+        currentRole.OnStateEnter();
     }
 
     BaseAbstractState FindState(State state)
@@ -71,7 +90,6 @@ public class StateManager : MonoBehaviour
             "idle" => idle,
             "playing" => playing,
             "waiting" => waiting,
-            "learning" => learning,
             "previousState" => previousState,
             "following" => following,
             _ => waiting,
@@ -79,23 +97,43 @@ public class StateManager : MonoBehaviour
         return selectedState;
     }
 
+    BaseAbstractState FindRole(Role role)
+    {
+        BaseAbstractState selectedRole = role.ToString() switch
+        {
+            "explorer" => explorer,
+            "learner" => learner,
+            //"feeder" => feeder,
+            //"warrior" => warrior,
+            "unassigned" => unassigned,
+            _ => unassigned,
+        };
+        return selectedRole;
+    }
+
     private void OnTriggerEnter(Collider trigger)
     {
         currentState.OnTriggerEnter(trigger);
+        currentRole.OnTriggerEnter(trigger);
+    }
 
+    private void OnTriggerStay(Collider trigger)
+    {
+        currentState.OnTriggerStay(trigger);
+        currentRole.OnTriggerStay(trigger);
     }
 
     private void OnTriggerExit(Collider trigger)
     {
         currentState.OnTriggerExit(trigger);
+        currentRole.OnTriggerExit(trigger);
+
         if (trigger.CompareTag("BorderWall"))
         {
             SwitchState(State.waiting);
             Debug.Log("changing State");
         }
     }
-
-    
 
 }
 
@@ -104,9 +142,17 @@ public enum State
     idle,
     playing,
     waiting,
-    learning,
     previousState,
     following
+}
+
+public enum Role
+{
+    learner,
+    explorer,
+    feeder,
+    warrior,
+    unassigned
 }
 
 

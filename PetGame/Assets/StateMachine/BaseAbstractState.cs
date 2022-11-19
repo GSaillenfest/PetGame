@@ -23,11 +23,17 @@ public abstract class BaseAbstractState
     public abstract void OnStateExit();
 
     public abstract void OnTriggerEnter(Collider trigger);
+    public abstract void OnTriggerStay(Collider trigger);
     public abstract void OnTriggerExit(Collider trigger);
 
     public void SwitchState(State state)
     {
         context.SwitchState(state);
+    }
+
+    public void SwitchRole(Role role)
+    {
+        context.SwitchRole(role);
     }
 
     public void LookAt(Vector3 direction)

@@ -15,7 +15,7 @@ public class PlayingState : BaseAbstractState
         context.navMeshAgent.speed = 7f;
         toy = context.toy;
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.blue;
-        context.animator.SetBool("Walking", true);
+        //context.animator.SetBool("Walking", true);
     }
 
 
@@ -42,7 +42,7 @@ public class PlayingState : BaseAbstractState
 
             if ((mousePos - context.transform.position).magnitude <= 10f)
             {
-                SwitchState(State.learning);
+                //SwitchState(State.learning);
             }
         }
     }
@@ -60,6 +60,11 @@ public class PlayingState : BaseAbstractState
     }
 
     public override void OnTriggerEnter(Collider trigger)
+    {
+
+    }
+
+    public override void OnTriggerStay(Collider trigger)
     {
 
     }

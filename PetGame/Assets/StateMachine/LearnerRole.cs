@@ -4,18 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class LearningState : BaseAbstractState
+public class LearnerRole : BaseAbstractState
 {
-    public LearningState(StateManager _context) : base(_context) { }
+    public LearnerRole(StateManager _context) : base(_context) { }
     float timerLearning;
 
 
     public override void OnStateEnter()
     {
-        Debug.Log("Entering LearningState");
-        //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.red;
+        Debug.Log("Entering LearnerRole");
         timerLearning = 5f;
-        context.animator.SetBool("Walking", false);
         path = new();
     }
 
@@ -39,13 +37,14 @@ public class LearningState : BaseAbstractState
             {
                 //Debug.Log(context.navMeshAgent.hasPath);
                 pathPoints.Clear();
-                SwitchState(State.previousState);
+                SwitchRole(Role.unassigned);
             }
             else
             {
                 //Debug.Log(context.navMeshAgent.hasPath);
                 context.pathPoints = pathPoints;
                 SwitchState(State.following);
+                SwitchRole(Role.explorer);
             }
         }
     }
@@ -76,13 +75,17 @@ public class LearningState : BaseAbstractState
 
     }
 
-
     public override void OnStateExit()
     {
-        //Debug.Log("Exiting LearningState");
+
     }
 
     public override void OnTriggerEnter(Collider trigger)
+    {
+
+    }
+
+    public override void OnTriggerStay(Collider trigger)
     {
 
     }
