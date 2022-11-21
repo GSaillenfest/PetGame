@@ -5,12 +5,13 @@ using UnityEngine;
 public class Food : MonoBehaviour
 {
 
-    int foodNumber = 10;
+    float foodNumber = 100;
+    Vector3 startSize;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        startSize = transform.localScale;
     }
 
     // Update is called once per frame
@@ -24,6 +25,15 @@ public class Food : MonoBehaviour
 
     public void ReduceFood()
     {
-        foodNumber--;
+        foodNumber -= Time.deltaTime;
+        transform.localScale = (foodNumber / 100) * startSize;
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (collision.gameObject.TryGetComponent<StateManager>(out StateManager state))
+        {
+            ReduceFood();
+        }
     }
 }

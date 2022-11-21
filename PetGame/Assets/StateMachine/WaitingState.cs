@@ -17,7 +17,7 @@ public class WaitingState : BaseAbstractState
         {
             timerWaiting = 0f;
         }
-        timerWaiting = Random.Range(0.1f, 0.25f);
+        timerWaiting = Random.Range(0.5f, 0.25f);
         //context.animator.SetBool("Walking", false);
 
     }

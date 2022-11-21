@@ -52,19 +52,25 @@ public class ExplorerRole : BaseAbstractState
             BringBackFood(trigger.transform.position);
             trigger.gameObject.GetComponent<Food>().ReduceFood();
         }
+
         if (trigger.CompareTag("Enter"))
         {
-            if (hasFood)
-            {
-                hunger = 100f;
-                hasFood = false;
-            }
-            else
+        }
+
+        if (trigger.CompareTag("FoodStock"))
+        {
+            if (!hasFood)
             {
                 SwitchRole(Role.unassigned);
                 SwitchState(State.idle);
             }
+            else
+            {
+                hunger = 100f;
+                hasFood = false;
+            }
         }
+
 
     }
 
@@ -74,6 +80,7 @@ public class ExplorerRole : BaseAbstractState
         _pathPoints.RemoveRange(_context.pathIndex, _pathPoints.Count - _context.pathIndex);
         _pathPoints.Add(food);
         _pathPoints.Reverse();
+        _pathPoints.Add(_context.foodStock);
         _context.pathPoints = _pathPoints;
         SwitchState(State.waiting);
         hasFood = true;

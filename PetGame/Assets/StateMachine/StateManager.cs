@@ -28,6 +28,7 @@ public class StateManager : MonoBehaviour
     public CameraController cameraController;
     public Vector3 foodStock;
     public Vector3 colonyEnter;
+    public Vector3 colonyCenter;
 
     float speed = 300f;
     public float Speed { get { return speed; } set { speed = Mathf.Min(value, 600f); } }
@@ -147,7 +148,6 @@ public class StateManager : MonoBehaviour
 public enum State
 {
     idle,
-    playing,
     waiting,
     previousState,
     following

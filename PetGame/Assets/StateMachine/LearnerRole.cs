@@ -9,19 +9,29 @@ public class LearnerRole : BaseAbstractState
     public LearnerRole(StateManager _context) : base(_context) { }
     float timerLearning;
     bool isLearning;
+    float timerFocus;
 
 
     public override void OnStateEnter()
     {
-        timerLearning = 10f;
+        timerFocus = 10f;
+        timerLearning = 5f;
         _path = new();
         _pathPoints.Clear();
         _pathPoints.Add(_context.colonyEnter);
+        SwitchState(State.waiting);
     }
 
 
     public override void OnStateUpdate()
     {
+        timerFocus -= Time.deltaTime;
+        if (timerFocus <= 0f)
+        {
+            SwitchRole(Role.unassigned);
+            SwitchState(State.idle);
+        }
+
         if (timerLearning > 0f)
         {
             if (Input.GetMouseButtonDown(0))
@@ -30,35 +40,33 @@ public class LearnerRole : BaseAbstractState
                 isLearning = true;
                 SwitchState(State.waiting);
             }
-            if (_pathPoints.Count != 0)
+            if (_pathPoints.Count > 1)
             {
                 timerLearning -= Time.deltaTime;
             }
         }
         else
         {
-            if (_pathPoints.Count < 2)
+            //if (_pathPoints.Count )
+            //{
+            //    _pathPoints.Clear();
+            //    SwitchRole(Role.unassigned);
+            //    SwitchState(State.idle);
+            //}
+            //else
+            //{
+            _context.pathPoints = _pathPoints;
+            if (_context.navMeshAgent.remainingDistance >= 1f)
             {
-                //Debug.Log(context.navMeshAgent.hasPath);
-                _pathPoints.Clear();
-                SwitchRole(Role.unassigned);
-                SwitchState(State.idle);
+                _context.navMeshAgent.CalculatePath(_pathPoints[0], _path);
+                _context.navMeshAgent.SetPath(_path);
+                SwitchState(State.following);
+                SwitchRole(Role.explorer);
             }
             else
             {
-                //Debug.Log(context.navMeshAgent.hasPath);
-                _context.pathPoints = _pathPoints;
-                if (_context.navMeshAgent.remainingDistance >= 1f)
-                {
-                    _context.navMeshAgent.CalculatePath(_pathPoints[0], _path);
-                    _context.navMeshAgent.SetPath(_path);
-                }
-                else
-                {
-                    SwitchState(State.following);
-                    SwitchRole(Role.explorer);
-                }
             }
+            //}
         }
 
 
@@ -94,7 +102,6 @@ public class LearnerRole : BaseAbstractState
                 }
                 if (pathPoint != null)
                 {
-                    Debug.Log(pathPoint);
                     pathPoint += _pathPoints[_pathPoints.Count - 1];
                 }
                 _pathPoints.Add(pathPoint);

@@ -9,6 +9,8 @@ TagManager:
   - LearningZone
   - Food
   - Enter
+  - Colony
+  - FoodStock
   layers:
   - Default
   - TransparentFX

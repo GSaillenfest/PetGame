@@ -8,15 +8,15 @@ public class IdleState : BaseAbstractState
 {
 
     Vector3 randomPos;
+    Vector3 startPos;
     float timer = 3f;
     public IdleState(StateManager _context) : base(_context) { }
 
 
     public override void OnStateEnter()
     {
-        //context.Speed = 100f;
-        _context.navMeshAgent.speed = 5f;
-        //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
+        startPos = _context.transform.position;
+        _context.navMeshAgent.speed = 7f;
         RandomPosition();
         //context.animator.SetBool("Walking", true);
         timer = 3f;
@@ -25,7 +25,6 @@ public class IdleState : BaseAbstractState
 
     public override void OnStateUpdate()
     {
-
     }
 
     public override void OnStateFixedUpdate()
@@ -67,11 +66,11 @@ public class IdleState : BaseAbstractState
 
     public override void OnTriggerEnter(Collider trigger)
     {
-        if (trigger.gameObject.CompareTag("Toy"))
-        {
-            _context.toy = trigger.gameObject;
-            SwitchState(State.playing);
-        }
+        //if (trigger.gameObject.CompareTag("Toy"))
+        //{
+        //    _context.toy = trigger.gameObject;
+        //    SwitchState(State.playing);
+        //}
     }
 
     public override void OnTriggerStay(Collider trigger)
@@ -81,6 +80,10 @@ public class IdleState : BaseAbstractState
 
     public override void OnTriggerExit(Collider trigger)
     {
-
+        if (trigger.gameObject.CompareTag("Colony"))
+        {
+            randomPos = startPos;
+            timer = 5f;
+        }
     }
 }
