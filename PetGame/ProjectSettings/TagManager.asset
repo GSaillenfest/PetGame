@@ -7,6 +7,8 @@ TagManager:
   - Toy
   - BorderWall
   - LearningZone
+  - Food
+  - Enter
   layers:
   - Default
   - TransparentFX

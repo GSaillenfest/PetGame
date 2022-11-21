@@ -7,17 +7,15 @@ using UnityEngine.AI;
 public class FollowingPathState : BaseAbstractState
 {
     public FollowingPathState(StateManager _context) : base(_context) { }
-    int pathIndex;
 
     public override void OnStateEnter()
     {
-        Debug.Log("Entering FollowingPathState");
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.Yellow;
        // context.animator.SetBool("Walking", true);
-        pathPoints = context.pathPoints;
-        pathIndex = 0;
-        context.navMeshAgent.CalculatePath(pathPoints[pathIndex], path);
-        context.navMeshAgent.SetPath(path);
+        _pathPoints = _context.pathPoints;
+        _pathIndex = 0;
+        _context.navMeshAgent.CalculatePath(_pathPoints[_pathIndex], _path);
+        _context.navMeshAgent.SetPath(_path);
     }
 
 
@@ -26,19 +24,42 @@ public class FollowingPathState : BaseAbstractState
             MoveAlongPath();
     }
 
-    // bugged for now.
     private void MoveAlongPath()
     {
-        if (context.navMeshAgent.remainingDistance <= 5f)
+        if (_context.navMeshAgent.remainingDistance <= 1f)
         {
-            if (pathIndex < pathPoints.Count - 1) pathIndex++;
-            else pathIndex = 0;
-            context.navMeshAgent.CalculatePath(pathPoints[pathIndex], path);
-            context.navMeshAgent.SetPath(path);
+            _pathPoints = _context.pathPoints;
+            if (_pathIndex < _pathPoints.Count - 1)
+            {
+                _pathIndex++;
+                _context.pathIndex = _pathIndex;
+            }
+            else
+            {
+                _pathPoints.Reverse();
+                _pathIndex = 0;
+                _context.pathIndex = _pathIndex;
+            }
+            if (_context.navMeshAgent.CalculatePath(_pathPoints[_pathIndex], _path))
+            {
+                _context.navMeshAgent.SetPath(_path);
+            }
+            else
+            {
+                if (_pathIndex < _pathPoints.Count - 1)
+                {
+                    _pathIndex++;
+                    _context.pathIndex = _pathIndex;
+                }
+                else
+                {
+                    _pathIndex = 0;
+                    _context.pathIndex = _pathIndex;
+                }
+            }
         }
-        for (int i = 0; i < path.corners.Length - 1; i++)
-        Debug.DrawLine(path.corners[i], path.corners[i + 1], Color.red, 2f);
-
+        for (int i = 0; i < _path.corners.Length - 1; i++)
+        Debug.DrawLine(_path.corners[i], _path.corners[i + 1], Color.red, 2f);
     }
 
     public override void OnStateFixedUpdate()
@@ -48,7 +69,6 @@ public class FollowingPathState : BaseAbstractState
 
     public override void OnStateExit()
     {
-        //Debug.Log("Exiting FollowingPathState");
     }
 
     public override void OnTriggerEnter(Collider trigger)

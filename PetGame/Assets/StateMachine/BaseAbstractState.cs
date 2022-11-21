@@ -5,13 +5,14 @@ using UnityEngine.AI;
 
 public abstract class BaseAbstractState
 {
-    protected StateManager context;
-    protected List<Vector3> pathPoints = new();
-    protected NavMeshPath path = new();
+    protected StateManager _context;
+    protected List<Vector3> _pathPoints = new();
+    protected int _pathIndex;
+    protected NavMeshPath _path = new();
 
-    public BaseAbstractState(StateManager _context)
+    public BaseAbstractState(StateManager context)
     {
-        context = _context;
+        this._context = context;
     }
 
     public abstract void OnStateEnter();
@@ -28,18 +29,23 @@ public abstract class BaseAbstractState
 
     public void SwitchState(State state)
     {
-        context.SwitchState(state);
+        _context.SwitchState(state);
     }
 
     public void SwitchRole(Role role)
     {
-        context.SwitchRole(role);
+        _context.SwitchRole(role);
     }
 
     public void LookAt(Vector3 direction)
     {
         Quaternion lookRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
-        context.creatureRb.transform.rotation = lookRotation;
+        _context.creatureRb.transform.rotation = lookRotation;
+    }
+
+    public void Die()
+    {
+        GameObject.Destroy(_context.gameObject);
     }
 
 }

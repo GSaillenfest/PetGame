@@ -22,9 +22,12 @@ public class StateManager : MonoBehaviour
     //public Animator animator;
     public NavMeshAgent navMeshAgent;
     public List<Vector3> pathPoints;
+    public int pathIndex;
     public Rigidbody creatureRb;
     public GameObject toy;
     public CameraController cameraController;
+    public Vector3 foodStock;
+    public Vector3 colonyEnter;
 
     float speed = 300f;
     public float Speed { get { return speed; } set { speed = Mathf.Min(value, 600f); } }
@@ -38,6 +41,8 @@ public class StateManager : MonoBehaviour
         unassigned = new(this);
         explorer = new(this);
         learner = new(this);
+        colonyEnter = GameObject.Find("ColonyGate").transform.position;
+        foodStock = GameObject.Find("FoodStock").transform.position;
 
         //animator = GetComponentInChildren<Animator>();
         navMeshAgent = GetComponentInChildren<NavMeshAgent>();
@@ -67,18 +72,20 @@ public class StateManager : MonoBehaviour
 
     public void SwitchState(State state)
     {
+        //Debug.Log("Current state is : " + currentState.ToString());
+        //Debug.Log("New state is : " + state.ToString());
         BaseAbstractState newState = FindState(state);
         currentState.OnStateExit();
         previousState = currentState;
         currentState = newState;
         currentState.OnStateEnter();
-    }    
+    }
     
     public void SwitchRole(Role role)
     {
         BaseAbstractState newRole = FindRole(role);
         currentRole.OnStateExit();
-        previousState = currentRole;
+        //previousRole = currentRole;
         currentRole = newRole;
         currentRole.OnStateEnter();
     }

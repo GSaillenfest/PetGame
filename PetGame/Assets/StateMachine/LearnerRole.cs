@@ -8,13 +8,15 @@ public class LearnerRole : BaseAbstractState
 {
     public LearnerRole(StateManager _context) : base(_context) { }
     float timerLearning;
+    bool isLearning;
 
 
     public override void OnStateEnter()
     {
-        Debug.Log("Entering LearnerRole");
-        timerLearning = 5f;
-        path = new();
+        timerLearning = 10f;
+        _path = new();
+        _pathPoints.Clear();
+        _pathPoints.Add(_context.colonyEnter);
     }
 
 
@@ -25,28 +27,41 @@ public class LearnerRole : BaseAbstractState
             if (Input.GetMouseButtonDown(0))
             {
                 LearningPath();
+                isLearning = true;
+                SwitchState(State.waiting);
             }
-            if (pathPoints.Count != 0)
+            if (_pathPoints.Count != 0)
             {
                 timerLearning -= Time.deltaTime;
             }
         }
         else
         {
-            if (pathPoints.Count < 2)
+            if (_pathPoints.Count < 2)
             {
                 //Debug.Log(context.navMeshAgent.hasPath);
-                pathPoints.Clear();
+                _pathPoints.Clear();
                 SwitchRole(Role.unassigned);
+                SwitchState(State.idle);
             }
             else
             {
                 //Debug.Log(context.navMeshAgent.hasPath);
-                context.pathPoints = pathPoints;
-                SwitchState(State.following);
-                SwitchRole(Role.explorer);
+                _context.pathPoints = _pathPoints;
+                if (_context.navMeshAgent.remainingDistance >= 1f)
+                {
+                    _context.navMeshAgent.CalculatePath(_pathPoints[0], _path);
+                    _context.navMeshAgent.SetPath(_path);
+                }
+                else
+                {
+                    SwitchState(State.following);
+                    SwitchRole(Role.explorer);
+                }
             }
         }
+
+
     }
 
     void LearningPath()
@@ -56,18 +71,50 @@ public class LearnerRole : BaseAbstractState
 
         if (Physics.Raycast(ray, out hit, 10000f, 128))
         {
-            Vector3 mousePos = hit.point;
-            mousePos.y = context.transform.position.y;
-            pathPoints.Add(mousePos);
-            context.cameraController.SetCommandClickFeedback(Color.red, mousePos);
-            Debug.DrawRay(ray.origin, ray.direction * (ray.origin - hit.point).magnitude, Color.green, 10f);
-            timerLearning = 5f;
-
-            Vector3 direction = mousePos - context.transform.position;
-            LookAt(direction);
+            if (hit.collider.CompareTag("LearningZone"))
+            {
+                string name = hit.collider.gameObject.name;
+                Vector3 pathPoint = new();
+                switch (name)
+                {
+                    case "North":
+                        pathPoint = Vector3.right * 40f;
+                        break;
+                    case "South":
+                        pathPoint = -Vector3.right * 40f;
+                        break;
+                    case "West":
+                        pathPoint = Vector3.forward * 40f;
+                        break;
+                    case "East":
+                        pathPoint = -Vector3.forward * 40f;
+                        break;
+                    default:
+                        break;
+                }
+                if (pathPoint != null)
+                {
+                    Debug.Log(pathPoint);
+                    pathPoint += _pathPoints[_pathPoints.Count - 1];
+                }
+                _pathPoints.Add(pathPoint);
+                _context.cameraController.SetCommandClickFeedback(Color.red, hit.point);
+            }
         }
 
-        Debug.Log(pathPoints.Count);
+        //if (Physics.Raycast(ray, out hit, 10000f, 128))
+        //{
+        //    Vector3 mousePos = hit.point;
+        //    mousePos.y = context.transform.position.y;
+        //    pathPoints.Add(mousePos);
+        //    Debug.DrawRay(ray.origin, ray.direction * (ray.origin - hit.point).magnitude, Color.green, 10f);
+        //    timerLearning = 5f;
+
+        //    Vector3 direction = mousePos - context.transform.position;
+        //    LookAt(direction);
+        //}
+
+        Debug.Log(_pathPoints.Count);
     }
 
     public override void OnStateFixedUpdate()
@@ -92,6 +139,12 @@ public class LearnerRole : BaseAbstractState
 
     public override void OnTriggerExit(Collider trigger)
     {
-
+        if (trigger.CompareTag("LearningZone"))
+        {
+            if (!isLearning)
+            {
+                SwitchRole(Role.unassigned);
+            }
+        }
     }
 }

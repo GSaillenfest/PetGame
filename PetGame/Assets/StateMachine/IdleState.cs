@@ -14,9 +14,8 @@ public class IdleState : BaseAbstractState
 
     public override void OnStateEnter()
     {
-        Debug.Log("Entering IdleState");
         //context.Speed = 100f;
-        context.navMeshAgent.speed = 5f;
+        _context.navMeshAgent.speed = 5f;
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.green;
         RandomPosition();
         //context.animator.SetBool("Walking", true);
@@ -36,21 +35,20 @@ public class IdleState : BaseAbstractState
 
     public override void OnStateExit()
     {
-        Debug.Log("Exiting IdleState");
     }
 
     void RandomPosition()
     {
         Vector2 randomInsideCircle = (Random.insideUnitCircle * 5f);
         randomInsideCircle += randomInsideCircle.normalized * 5;
-        randomPos = context.transform.position + new Vector3(randomInsideCircle.x, 0, randomInsideCircle.y);
+        randomPos = _context.transform.position + new Vector3(randomInsideCircle.x, 0, randomInsideCircle.y);
         randomPos.y = 0;
     }
 
     private void MoveTo(Vector3 destination)
     {
-        Vector3 direction = destination - context.transform.position;
-        direction.y = context.transform.position.y;
+        Vector3 direction = destination - _context.transform.position;
+        direction.y = _context.transform.position.y;
 
         LookAt(direction);
 
@@ -62,7 +60,7 @@ public class IdleState : BaseAbstractState
         }
         else if (direction.magnitude > 0.1f)
         {
-            context.navMeshAgent.SetDestination(destination);
+            _context.navMeshAgent.SetDestination(destination);
             timer -= Time.deltaTime;
         }
     }
@@ -71,7 +69,7 @@ public class IdleState : BaseAbstractState
     {
         if (trigger.gameObject.CompareTag("Toy"))
         {
-            context.toy = trigger.gameObject;
+            _context.toy = trigger.gameObject;
             SwitchState(State.playing);
         }
     }
