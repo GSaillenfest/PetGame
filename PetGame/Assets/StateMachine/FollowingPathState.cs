@@ -8,6 +8,8 @@ public class FollowingPathState : BaseAbstractState
 {
     public FollowingPathState(StateManager _context) : base(_context) { }
 
+    float timer = 0f;
+
     public override void OnStateEnter()
     {
         //context.transform.gameObject.GetComponent<Renderer>().material.color = Color.Yellow;
@@ -22,24 +24,25 @@ public class FollowingPathState : BaseAbstractState
     public override void OnStateUpdate()
     {
             MoveAlongPath();
+            timer += Time.deltaTime;
     }
 
     private void MoveAlongPath()
     {
         if (_context.navMeshAgent.remainingDistance <= 1f)
         {
+            timer = 0f;
             _pathPoints = _context.pathPoints;
             if (_pathIndex < _pathPoints.Count - 1)
             {
                 _pathIndex++;
-                _context.pathIndex = _pathIndex;
             }
             else
             {
                 _pathPoints.Reverse();
                 _pathIndex = 0;
-                _context.pathIndex = _pathIndex;
             }
+                _context.pathIndex = _pathIndex;
             if (_context.navMeshAgent.CalculatePath(_pathPoints[_pathIndex], _path))
             {
                 _context.navMeshAgent.SetPath(_path);
@@ -57,7 +60,15 @@ public class FollowingPathState : BaseAbstractState
                     _context.pathIndex = _pathIndex;
                 }
             }
+            _context.pathPoints = _pathPoints;
         }
+        else if (timer > 5f)
+        {
+            _context.pathPoints.RemoveRange(_context.pathIndex, _pathPoints.Count - _context.pathIndex);
+            _pathIndex --;
+            _context.pathIndex = _pathIndex;
+        }
+
         for (int i = 0; i < _path.corners.Length - 1; i++)
         Debug.DrawLine(_path.corners[i], _path.corners[i + 1], Color.red, 2f);
     }

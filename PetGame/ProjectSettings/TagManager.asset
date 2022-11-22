@@ -11,6 +11,7 @@ TagManager:
   - Enter
   - Colony
   - FoodStock
+  - Insect
   layers:
   - Default
   - TransparentFX

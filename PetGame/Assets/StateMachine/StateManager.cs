@@ -8,6 +8,8 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Rigidbody))]
 public class StateManager : MonoBehaviour
 {
+    [SerializeField] public GameObject InstantiatePoint;
+    [SerializeField] public GameObject crumbPrefab;
     public BaseAbstractState currentState;
     public BaseAbstractState currentRole;
     public BaseAbstractState previousState;
@@ -18,6 +20,7 @@ public class StateManager : MonoBehaviour
     public UnassignedRole unassigned;
     public ExplorerRole explorer;
     public LearnerRole learner;
+    public GameObject loot;
 
     //public Animator animator;
     public NavMeshAgent navMeshAgent;

@@ -22,10 +22,10 @@ public class ExplorerRole : BaseAbstractState
     {
         hunger -= Time.deltaTime;
 
-        if (hunger < 30f)
-        {
-            _context.navMeshAgent.SetDestination(_context.colonyEnter);
-        }
+        //if (hunger < 30f)
+        //{
+        //    _context.navMeshAgent.SetDestination(_context.colonyEnter);
+        //}
         if (hunger < 0f)
         {
             Die();
@@ -44,17 +44,17 @@ public class ExplorerRole : BaseAbstractState
 
     public override void OnTriggerEnter(Collider trigger)
     {
-        Debug.Log(hasFood);
         if (trigger.CompareTag("Food") && !hasFood)
         {
             Debug.Log("Food");
             hunger += 20f;
             BringBackFood(trigger.transform.position);
-            trigger.gameObject.GetComponent<Food>().ReduceFood();
         }
 
-        if (trigger.CompareTag("Enter"))
+        if (trigger.CompareTag("Enter") && _context.pathIndex != 0)
         {
+            _context.pathPoints.Add(_context.foodStock);
+
         }
 
         if (trigger.CompareTag("FoodStock"))
@@ -67,11 +67,10 @@ public class ExplorerRole : BaseAbstractState
             else
             {
                 hunger = 100f;
+                trigger.gameObject.GetComponent<FoodStock>().StackFood(_context.loot);
                 hasFood = false;
             }
         }
-
-
     }
 
     private void BringBackFood(Vector3 food)
@@ -83,7 +82,6 @@ public class ExplorerRole : BaseAbstractState
         _pathPoints.Add(_context.foodStock);
         _context.pathPoints = _pathPoints;
         SwitchState(State.waiting);
-        hasFood = true;
     }
 
     public override void OnTriggerStay(Collider trigger)
@@ -95,4 +93,16 @@ public class ExplorerRole : BaseAbstractState
     {
 
     }
+
+    public bool TransportFood()
+    {
+        Debug.Log("Food");
+        if (!hasFood)
+        {
+            _context.loot = GameObject.Instantiate(_context.crumbPrefab, _context.InstantiatePoint.transform.position, Quaternion.identity, _context.InstantiatePoint.transform);
+            hasFood = true;
+        }
+        return hasFood;
+    }
+
 }

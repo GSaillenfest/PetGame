@@ -9,7 +9,7 @@ public class Food : MonoBehaviour
     Vector3 startSize;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         startSize = transform.localScale;
     }
@@ -25,15 +25,22 @@ public class Food : MonoBehaviour
 
     public void ReduceFood()
     {
-        foodNumber -= Time.deltaTime;
+        foodNumber--;
+        Debug.Log(foodNumber);
+        Debug.Log(startSize);
+        Debug.Log((foodNumber / 100));
         transform.localScale = (foodNumber / 100) * startSize;
     }
 
-    private void OnCollisionStay(Collision collision)
+    private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.TryGetComponent<StateManager>(out StateManager state))
+        if (collision.gameObject.CompareTag("Insect"))
         {
-            ReduceFood();
+            Debug.Log("Transport");
+            if (collision.gameObject.GetComponent<StateManager>().explorer.TransportFood())
+            {
+                ReduceFood();
+            }
         }
     }
 }
